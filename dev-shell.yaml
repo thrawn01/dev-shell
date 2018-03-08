@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: dev-shell
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: dev-shell
+    spec:
+      containers:
+      - name: master
+        image: dev-shell:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 22
+        env:
+        volumeMounts:
+        - mountPath: /root/.ssh/
+          name: ssh-dir
+        - mountPath: /etc/ssh/hostKeys/
+          name: ssh-host-keys
+        - mountPath: /root/Development/
+          name: host-volume
+      volumes:
+      - name: host-volume
+        hostPath:
+          path: /Users/thrawn/Development
+      - name: ssh-dir
+        secret:
+          secretName: ssh-keys
+          defaultMode: 0600
+      - name: ssh-host-keys
+        secret:
+          secretName: ssh-host-keys
+          defaultMode: 0600
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-shell
+spec:
+  type: LoadBalancer
+  selector:
+    app: dev-shell
+  ports:
+    # the port that this service should serve on
+  - port: 2222
+    protocol: TCP
+    targetPort: 22

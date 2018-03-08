@@ -1,0 +1,30 @@
+$ dev-shell
+I see you don't have a ~/.dev-shell directory, lets get started
+
+What directory do you want to mount into the development shell? (Where you keep your code)
+> /Users/thrawn/Development
+
+I see you have GOPATH defined, Inject GOPATH into dev-shell?
+[Y/N]> Y
+
+What public key should I use to secure the ssh container (Leave this empty and I'll generate one in ~/.dev-shell to use)
+> /Users/thrawn/.ssh/id_rsa.pub
+
+== Pull the image or create the image ==
+
+## TODO: How to SSH into the container (Loadbalancer, or kubectl proxy)
+Third party IDE's can SSH into the shell container via port 123124 `ssh -P localhost:123124`
+
+## Customizing dev-shell
+
+## Modify the shell image
+edit ~/.dev-shell/Dockerfile then run `dev-shell build`
+
+## Customize the k8 deploy
+edit ~/.dev-shell/shell.yaml then run `dev-shell deploy`
+- or -
+re-run the quetionaire with `dev-shell config`
+
+Your shell is ready....
+
+dev-shell>
