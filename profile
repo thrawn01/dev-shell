@@ -1,6 +1,10 @@
 export GOROOT=/opt/golang/current
 export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
 
+# Initialize virtualenv and disable the prompt
+export VIRTUAL_ENV_DISABLE_PROMPT=1
+source ~/.venv/bin/activate
+
 # Include ENV given to us by K8 during pod creation
 # If this file is missing an ENV pair it might not have been
 # available when the pod was created.

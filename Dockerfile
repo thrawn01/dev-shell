@@ -17,13 +17,32 @@ RUN go install -ldflags "-linkmode external -extldflags -static" github.com/mail
 FROM ubuntu:16.04
 
 RUN apt-get update && \
-    apt-get install -y openssh-server vim less curl iputils-ping net-tools build-essential make && \
+    apt-get install -y \
+	openssh-server \
+	vim \
+	less \
+	curl \
+	iputils-ping \
+	net-tools \
+	build-essential \
+	git \
+	python \
+	python-dev \
+	python-pip \
+	libyaml-dev \
+	libffi-dev \
+	libpython2.7-dev \
+	libssl-dev \
+	locales \
+	make && \
 	curl -O https://storage.googleapis.com/golang/go1.9.1.linux-amd64.tar.gz && \
 	mkdir -p /opt/golang && \
 	tar -C /opt/golang -zxf go1.9.1.linux-amd64.tar.gz && \
 	mv /opt/golang/go /opt/golang/1.9.1 && \
 	ln -s /opt/golang/1.9.1 /opt/golang/current && \
 	rm go1.9.1.linux-amd64.tar.gz && \
+	LC_ALL=C pip install virtualenv && \
+	virtualenv ~/.venv && \
 	mkdir -p /var/run/sshd
 
 ADD profile /root/.profile

@@ -16,6 +16,8 @@ spec:
         ports:
         - containerPort: 22
         env:
+          - name: LC_ALL
+            value: C
         volumeMounts:
         - mountPath: /root/.ssh/
           name: ssh-dir

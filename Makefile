@@ -9,12 +9,13 @@ all:
 	@echo "2. Run 'generateHostKeys.sh' to generate new ssh keys"
 	@echo "3. Run 'updateKeys.sh' to upload the keys to k8 configmap"
 	@echo "4. Run 'make deploy' to deploy the 'dev' image to K8"
-	@echo "5. Login to the container with 'ssh -p 2222 root@localhost' or 'ssh root@shell'"
+	@echo "5. Run 'kubectl port-forward \$$(kubectl get pod -l app=dev-shell -o jsonpath={.items[].metadata.name}) 2222:22'"
+	@echo "6. Login to the container with 'ssh -p 2222 root@localhost' or 'ssh root@shell'"
 
 
 build:
 	@echo "# Run this command to ensure you are building against devgun docker:"
-	@echo '# eval $$(minikube docker-env)'
+	@echo '# eval \$$(minikube docker-env)'
 	docker build . -t dev-shell:latest
 
 deploy:
