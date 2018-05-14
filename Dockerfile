@@ -34,6 +34,7 @@ RUN apt-get update && \
 	libpython2.7-dev \
 	libssl-dev \
 	locales \
+	vim \
 	make && \
 	curl -O https://storage.googleapis.com/golang/go1.9.1.linux-amd64.tar.gz && \
 	mkdir -p /opt/golang && \
