@@ -11,7 +11,8 @@ all:
 	@echo "4. Run 'make deploy' to deploy the 'dev' image to K8"
 	@echo "5. Run 'kubectl port-forward \$$(kubectl get pod -l app=dev-shell -o jsonpath={.items[].metadata.name}) 2222:22'"
 	@echo "6. Login to the container with 'ssh -p 2222 root@localhost' or 'ssh root@shell'"
-
+	@echo ""
+	@echo " Non K8s deploy, 'make stop'"
 
 build:
 	@echo "# Run this command to ensure you are building against devgun docker:"
@@ -21,3 +22,9 @@ build:
 deploy:
 	kubectl apply -n $(NAMESPACE) -f  dev-shell.yaml
 
+start:
+	PWD=`pwd`
+	docker run -d --name=dev-shell -p 22:22 -v ${PWD}/hostKeys:/etc/ssh/hostKeys -v ${PWD}/ssh-config:/root/.ssh -v ${PWD}/dev:/root/Development dev-shell:latest
+
+stop:
+	docker stop dev-shell

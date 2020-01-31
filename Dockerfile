@@ -1,20 +1,19 @@
 # ----------------------------------
 # build the entrypoint binary
 # ----------------------------------
-FROM golang:1.9 AS go-build
+FROM golang:1.13 AS go-build
 
-ENV GOPATH /go
-RUN mkdir -p /go/src && mkdir -p /go/bin
-
-WORKDIR /go/src/github.com/mailgun/dev-shell
-COPY . .
-RUN go install -ldflags "-linkmode external -extldflags -static" github.com/mailgun/dev-shell/cmd/entrypoint
+RUN mkdir -p /src
+WORKDIR /src
+COPY . /src
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /entrypoint ./cmd/entrypoint 
+#RUN go install -ldflags "-linkmode external -extldflags -static" ./cmd/entrypoint
 
 
 # ----------------------------------
 # dev-shell image
 # ----------------------------------
-FROM ubuntu:16.04
+FROM registry.postgun.com:5000/mailgun/pybuild:latest
 
 RUN apt-get update && \
     apt-get install -y \
@@ -36,12 +35,12 @@ RUN apt-get update && \
 	locales \
 	vim \
 	make && \
-	curl -O https://storage.googleapis.com/golang/go1.9.1.linux-amd64.tar.gz && \
+    curl -O https://dl.google.com/go/go1.13.7.linux-amd64.tar.gz && \
 	mkdir -p /opt/golang && \
-	tar -C /opt/golang -zxf go1.9.1.linux-amd64.tar.gz && \
-	mv /opt/golang/go /opt/golang/1.9.1 && \
-	ln -s /opt/golang/1.9.1 /opt/golang/current && \
-	rm go1.9.1.linux-amd64.tar.gz && \
+	tar -C /opt/golang -zxf go1.13.7.linux-amd64.tar.gz && \
+	mv /opt/golang/go /opt/golang/1.13.7 && \
+	ln -s /opt/golang/1.13.7 /opt/golang/current && \
+	rm go*linux-amd64.tar.gz && \
 	LC_ALL=C pip install virtualenv && \
 	virtualenv ~/.venv && \
 	mkdir -p /var/run/sshd
@@ -57,7 +56,7 @@ RUN sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config 
 && echo "UserKnownHostsFile /dev/null" >> /etc/ssh/ssh_config
 
 # Copy the entrypoint binary
-COPY --from=go-build /go/bin/entrypoint /usr/sbin/entrypoint
+COPY --from=go-build /entrypoint /usr/sbin/entrypoint
 
 # Cleanup
 RUN rm /etc/ssh/ssh_host*
